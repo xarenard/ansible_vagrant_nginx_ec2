@@ -1,0 +1,17 @@
+---
+nginx_packages:
+  - nginx
+
+nginx_version: 1.10.0-1
+nginx_daemon: nginx
+nginx_user: www-data
+nginx_server_conf_root: /etc/nginx
+
+nginx_server_conf_filename: "{{nginx_server_conf_root}}/nginx.conf"
+
+#Available directory
+nginx_sites_available_path: "{{ nginx_server_conf_root }}/sites-available"
+nginx_sites_enabled_path: "{{ nginx_server_conf_root }}/sites-enabled"
+nginx_default_vhost_filename: "{{ nginx_sites_available_path }}/default"
+nginx_document_root: /var/www/html
+
