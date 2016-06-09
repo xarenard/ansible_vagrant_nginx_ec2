@@ -2,8 +2,7 @@
 # vi: set ft=ruby :
 
 Vagrant.configure(2) do |config|
-  config.vm.box = "aws"
-  #config.vm.hostname ="nginx-aws"
+  config.vm.box = "debian/jessie64"
 
   nginx_nodes = [{name: "nginx-node1"},
                  {name: "nginx-node2"}
@@ -13,12 +12,20 @@ Vagrant.configure(2) do |config|
   nginx_nodes.each do |node|
 
      config.vm.define node[:name] do |nginxnode|
+
+        nginxnode.vm.provider :virtualbox do |vb|
+            vb.gui = false
+            vb.name = node[:name]
+            vb.memory = 512
+        end
+
         nginxnode.vm.provider :aws do |aws,override|
+            override.vm.box = "aws"
             aws.access_key_id = ENV['AWS_ACCESS_KEY_ID']
             aws.secret_access_key = ENV['AWS_SECRET_ACCESS_KEY']
             aws.region="eu-central-1"
             aws.availability_zone="eu-central-1a"
-            aws.ami="ami-47d93c28"
+            aws.ami="ami-47d93c28" #debian/jessie ami
             aws.keypair_name = "aw_user"
             aws.tags = {
                 'Name' => node[:name]
@@ -26,8 +33,6 @@ Vagrant.configure(2) do |config|
             override.ssh.username = "admin"
             override.ssh.private_key_path = ENV['AWS_PRIVATE_KEY_PEM']
         end
-
-        #b.gui = false
 
         #provisioning with ansible
         nginxnode.vm.provision "ansible" do |ansible|
